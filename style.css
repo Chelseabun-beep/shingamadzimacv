@@ -1,23 +1,29 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Roboto Mono', monospace; /* Changed to Roboto Mono */
+    background-color: black; /* Set background to black */
+    color: white; /* Keep font color white */
 }
 
 header {
-    background-color: #4CAF50;
-    color: white;
-    text-align: center;
+    background-color: #4CAF50; /* Header background color */
+    color: white; /* Header text color */
+    text-align: center; /* Centered text */
 }
 
 #profile-pic {
-    width: 150px;
+    width: 150px; /* Profile picture width */
 }
 
 section {
-    padding: 20px;
+    padding: 20px; /* Section padding */
 }
 
 footer {
-   background-color: #f1f1f1;
-   padding: 10px;
-   text-align: center;
+    background-color: #f1f1f1; /* Footer background color */
+    padding: 10px; /* Footer padding */
+    text-align: center; /* Centered footer text */
+}
+
+a {
+    color: brightred; /* Hyperlink color set to bright red */
 }
