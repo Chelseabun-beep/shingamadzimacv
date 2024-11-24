@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&family=Roboto+Mono:wght@400&display=swap');
+
+body {
+    font-family: 'Roboto Mono', monospace;
+    background: linear-gradient(135deg, #ffe6f2, #ffccf2);
+    color: #333; /* Default text color */
+    margin: 0; /* Remove default margin */
+    padding: 20px; /* Add some padding */
+}
+
+header {
+    background-color: rgba(255, 182, 193, 0.9); /* Light pink (baby pink) */
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+h1 {
+    color: #ff1493; /* Title color */
+    text-align: left; /* Left align the main title */
+    font-size: 2.5em; /* Increase font size for better visibility */
+}
+
+h2 {
+    font-size: 2em; /* Section title size */
+    color: #d5006d; /* Darker pink for section headings */
+    margin-bottom: .5rem;
+    text-align: left; /* Left align section titles */
+}
+
+.post {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border-radius: .5rem;
+    background-color: rgba(255, 255, 255, 0.9); /* Light background for posts */
+    box-shadow: .1rem .1rem .5rem rgba(0, 0, 0, 0.5);
+}
+
+.post h3 {
+    margin-top: 0;
+    text-align: left; /* Left align post titles */
+    color: #ff1493; /* Deep pink for post titles */
+    font-size: 1.8em; /* Increase post title size */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); /* Add text shadow for contrast */
+}
+
+.post p {
+    margin-bottom: .5rem;
+}
+
+.post-date {
+    font-size: 0.9em; /* Smaller font size for the date */
+    color: #666; /* Gray color for the date */
+    margin-bottom: 0.5rem; /* Space below the date */
+}
+
+footer {
+    text-align: center; /* Center the footer */
+    margin-top: 20px; /* Space above footer */
+}
+
+#morePosts {
+    display: none; /* Hide additional posts initially */
+}
+
+/* Button styles */
+button {
+    background-color: #ff69b4; /* Button color */
+    color: white; /* Text color on button */
+    border: none; /* Remove border from button */
+    border-radius: .5rem; /* Rounded corners on button */
+    padding: .5rem .75rem; /* Padding inside button */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color .3s ease; /* Transition effect on hover */
+}
+
+button:hover {
+    background-color: #ff1493; /* Darker shade on hover */
+}
