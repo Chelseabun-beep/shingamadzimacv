@@ -1,0 +1,1309 @@
+// AUTOMATICALLY GENERATED: location from saved link.
+Map.setCenter(30.074999999941554, -19.625000017159348, 8)
+
+// Load the image asset
+var image = ee.Image('projects/ee-shingamadzima/assets/unki2024');
+
+// Clip the image to your area of interest
+var aoi = ee.Geometry.Polygon(
+        [[[30.08, -19.62],
+          [30.07, -19.62],
+          [30.07, -19.63],
+          [30.08, -19.63]]], null, false);
+var image = image.clip(aoi);
+
+// Resample the image to a common resolution
+var image = image.resample('bilinear').reproject({
+  crs: image.select(0).projection()
+});
+
+// Display the image
+Map.centerObject(aoi, 8);
+Map.addLayer(image, {bands: ['b1', 'b2', 'b3'], min: 0, max: 255}, 'image');
+
+var ndvi = image.normalizedDifference(['b3', 'b2']).rename('NDVI');
+Map.addLayer(ndvi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'NDVI');
+
+var evi = image.expression(
+  '2.5 * ((NIR - RED) / (NIR + 6 * RED - 7.5 * BLUE + 1))', {
+    'NIR': image.select('b3'),
+    'RED': image.select('b2'),
+    'BLUE': image.select('b1')
+}).rename('EVI');
+Map.addLayer(evi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'EVI');
+
+var savi = image.expression(
+  '((NIR - RED) / (NIR + RED + L)) * (1 + L)', {
+    'NIR': image.select('b3'),
+    'RED': image.select('b2'),
+    'L': 0.5  // soil-brightness correction factor
+}).rename('SAVI');
+Map.addLayer(savi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'SAVI');
+
+// Import the NASA-USDA Global Soil Moisture Data
+var soilMoisture = ee.ImageCollection('NASA_USDA/HSL/soil_moisture');
+
+// Select the 'ssm' band which represents surface soil moisture
+soilMoisture = soilMoisture.select('ssm');
+
+// Clip the soil moisture data to your area of interest
+soilMoisture = soilMoisture.map(function(image) {
+  return image.clip(aoi);
+});
+
+// Calculate the average soil moisture
+var avgSoilMoisture = soilMoisture.mean();
+
+// Display the average soil moisture
+Map.addLayer(avgSoilMoisture, {min: 0, max: 100, palette: ['red', 'orange', 'yellow']}, 'Average Soil Moisture');
+
+// Replace with your bucket name
+var bucket = 'soil_moisture_43'; 
+
+// Replace with your file name
+var fileName = 'unki2024'; 
+
+// Export the image to Cloud Storage
+Export.image.toCloudStorage({
+  image: image,
+  description: 'imageToCloudStorage',
+  bucket: bucket,
+  fileNamePrefix: fileName,
+});
+// AUTOMATICALLY GENERATED: location from saved link.
+Map.setCenter(30.074999999941554, -19.625000017159348, 8)
+
+// Load the image asset
+var image = ee.Image('projects/ee-scm/assets/unki2021');
+
+// Clip the image to your area of interest
+var aoi = ee.Geometry.Polygon(
+        [[[30.08, -19.62],
+          [30.07, -19.62],
+          [30.07, -19.63],
+          [30.08, -19.63]]], null, false);
+var image = image.clip(aoi);
+
+// Resample the image to a common resolution
+var image = image.resample('bilinear').reproject({
+  crs: image.select(0).projection()
+});
+
+// Display the image
+Map.centerObject(aoi, 8);
+Map.addLayer(image, {bands: ['b1', 'b2', 'b3'], min: 0, max: 255}, 'image');
+
+var ndvi = image.normalizedDifference(['b3', 'b2']).rename('NDVI');
+Map.addLayer(ndvi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'NDVI');
+
+var evi = image.expression(
+  '2.5 * ((NIR - RED) / (NIR + 6 * RED - 7.5 * BLUE + 1))', {
+    'NIR': image.select('b3'),
+    'RED': image.select('b2'),
+    'BLUE': image.select('b1')
+}).rename('EVI');
+Map.addLayer(evi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'EVI');
+
+var savi = image.expression(
+  '((NIR - RED) / (NIR + RED + L)) * (1 + L)', {
+    'NIR': image.select('b3'),
+    'RED': image.select('b2'),
+    'L': 0.5  // soil-brightness correction factor
+}).rename('SAVI');
+Map.addLayer(savi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'SAVI');
+
+// Import the NASA-USDA Global Soil Moisture Data
+var soilMoisture = ee.ImageCollection('NASA_USDA/HSL/soil_moisture');
+
+// Filter the collection to a specific time period
+var startDate = '2021-02-01';
+var endDate = '2021-02-28';
+soilMoisture = soilMoisture.filterDate(startDate, endDate);
+
+// Select the 'ssm' band which represents surface soil moisture
+soilMoisture = soilMoisture.select('ssm');
+
+// Clip the soil moisture data to your area of interest
+var aoi = ee.Geometry.Polygon(
+        [[[30.08, -19.62],
+          [30.07, -19.62],
+          [30.07, -19.63],
+          [30.08, -19.63]]], null, false);
+soilMoisture = soilMoisture.map(function(image) {
+  return image.clip(aoi);
+});
+
+// Display the soil moisture data
+Map.centerObject(aoi, 8);
+Map.addLayer(soilMoisture.mean(), {min: 0, max: 100}, 'Soil Moisture');
+
+// Replace with your bucket name
+var bucket = 'soil_moisture_43'; 
+
+// Replace with your file name
+var fileName = 'unki2021'; 
+
+// Export the image to Cloud Storage
+Export.image.toCloudStorage({
+  image: image,
+  description: 'imageToCloudStorage',
+  bucket: bucket,
+  fileNamePrefix: fileName,
+});
+// AUTOMATICALLY GENERATED: location from saved link.
+Map.setCenter(264.8, 34.8, 4)
+
+// Load the image asset
+var image = ee.Image('projects/ee-shingamadzima/assets/mimosa2021');
+
+// Clip the image to your area of interest
+var aoi = ee.Geometry.Polygon(
+        [[[29.83, -20.31],
+          [29.84, -20.31],
+          [29.84, -20.32],
+          [29.83, -20.32]]], null, false);
+var image = image.clip(aoi);
+
+// Resample the image to a common resolution
+var image = image.resample('bilinear').reproject({
+  crs: image.select(0).projection()
+});
+
+// Display the image
+Map.centerObject(aoi, 8);
+Map.addLayer(image, {bands: ['b1', 'b2', 'b3'], min: 0, max: 255}, 'image');
+
+var ndvi = image.normalizedDifference(['b3', 'b2']).rename('NDVI');
+Map.addLayer(ndvi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'NDVI');
+
+var evi = image.expression(
+  '2.5 * ((NIR - RED) / (NIR + 6 * RED - 7.5 * BLUE + 1))', {
+    'NIR': image.select('b3'),
+    'RED': image.select('b2'),
+    'BLUE': image.select('b1')
+}).rename('EVI');
+Map.addLayer(evi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'EVI');
+
+var savi = image.expression(
+  '((NIR - RED) / (NIR + RED + L)) * (1 + L)', {
+    'NIR': image.select('b3'),
+    'RED': image.select('b2'),
+    'L': 0.5  // soil-brightness correction factor
+}).rename('SAVI');
+Map.addLayer(savi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'SAVI');
+
+// Import the NASA-USDA Global Soil Moisture Data
+var soilMoisture = ee.ImageCollection('NASA_USDA/HSL/soil_moisture');
+
+// Filter the collection to a specific time period
+var startDate = '2021-02-01';
+var endDate = '2021-02-28';
+soilMoisture = soilMoisture.filterDate(startDate, endDate);
+
+// Select the 'ssm' band which represents surface soil moisture
+soilMoisture = soilMoisture.select('ssm');
+
+// Clip the soil moisture data to your area of interest
+soilMoisture = soilMoisture.map(function(image) {
+  return image.clip(aoi);
+});
+
+// Calculate the average soil moisture
+var avgSoilMoisture = soilMoisture.mean();
+
+// Display the average soil moisture
+Map.addLayer(avgSoilMoisture, {min: 0, max: 100, palette: ['red', 'orange', 'yellow']}, 'Average Soil Moisture');
+
+// Replace with your bucket name
+var bucket = 'soil_moisture_43'; 
+
+// Replace with your file name
+var fileName = 'mimosa2021'; 
+
+// Export the image to Cloud Storage
+Export.image.toCloudStorage({
+  image: image,
+  description: 'imageToCloudStorage',
+  bucket: bucket,
+  fileNamePrefix: fileName,
+});
+// AUTOMATICALLY GENERATED: location from saved link.
+Map.setCenter(30.442997790873903, -18.030821092141828, 8)
+
+// Load the image asset
+var image = ee.Image('projects/ee-shingamadzima/assets/zimplats2021');
+
+// Clip the image to your area of interest
+var aoi = ee.Geometry.Polygon(
+        [[[30.439, -18.026],
+          [30.438, -18.032],
+          [30.441, -18.037],
+          [30.451, -18.029]]], null, false);
+var image = image.clip(aoi);
+
+// Resample the image to a common resolution
+var image = image.resample('bilinear').reproject({
+  crs: image.select(0).projection()
+});
+
+// Display the image
+Map.centerObject(aoi, 8);
+Map.addLayer(image, {bands: ['b1', 'b2', 'b3'], min: 0, max: 255}, 'image');
+
+var ndvi = image.normalizedDifference(['b3', 'b2']).rename('NDVI');
+Map.addLayer(ndvi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'NDVI');
+
+var evi = image.expression(
+  '2.5 * ((NIR - RED) / (NIR + 6 * RED - 7.5 * BLUE + 1))', {
+    'NIR': image.select('b3'),
+    'RED': image.select('b2'),
+    'BLUE': image.select('b1')
+}).rename('EVI');
+Map.addLayer(evi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'EVI');
+
+var savi = image.expression(
+  '((NIR - RED) / (NIR + RED + L)) * (1 + L)', {
+    'NIR': image.select('b3'),
+    'RED': image.select('b2'),
+    'L': 0.5  // soil-brightness correction factor
+}).rename('SAVI');
+Map.addLayer(savi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'SAVI');
+
+// Import the NASA-USDA Global Soil Moisture Data
+var soilMoisture = ee.ImageCollection('NASA_USDA/HSL/soil_moisture');
+
+// Filter the collection to a specific time period
+var startDate = '2021-02-01';
+var endDate = '2021-02-28';
+soilMoisture = soilMoisture.filterDate(startDate, endDate);
+
+// Select the 'ssm' band which represents surface soil moisture
+soilMoisture = soilMoisture.select('ssm');
+
+// Clip the soil moisture data to your area of interest
+soilMoisture = soilMoisture.map(function(image) {
+  return image.clip(aoi);
+});
+
+// Calculate the average soil moisture
+var avgSoilMoisture = soilMoisture.mean();
+
+// Display the average soil moisture
+Map.addLayer(avgSoilMoisture, {min: 0, max: 100, palette: ['red', 'orange', 'yellow']}, 'Average Soil Moisture');
+
+// Replace with your bucket name
+var bucket = 'soil_moisture_43'; 
+
+// Replace with your file name
+var fileName = 'zimplats2021'; 
+
+// Export the image to Cloud Storage
+Export.image.toCloudStorage({
+  image: image,
+  description: 'imageToCloudStorage',
+  bucket: bucket,
+  fileNamePrefix: fileName,
+});
+// AUTOMATICALLY GENERATED: location from saved link.
+Map.setCenter(30.442997790873903, -18.030821092141828, 8)
+
+// Load the image asset
+var image = ee.Image('projects/ee-shingamadzima/assets/zimplats2024');
+
+// Clip the image to your area of interest
+var aoi = ee.Geometry.Polygon(
+        [[[30.439, -18.026],
+          [30.438, -18.032],
+          [30.441, -18.037],
+          [30.451, -18.029]]], null, false);
+var image = image.clip(aoi);
+
+// Resample the image to a common resolution
+var image = image.resample('bilinear').reproject({
+  crs: image.select(0).projection()
+});
+
+// Display the image
+Map.centerObject(aoi, 8);
+Map.addLayer(image, {bands: ['b1', 'b2', 'b3'], min: 0, max: 255}, 'image');
+
+var ndvi = image.normalizedDifference(['b3', 'b2']).rename('NDVI');
+Map.addLayer(ndvi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'NDVI');
+
+var evi = image.expression(
+  '2.5 * ((NIR - RED) / (NIR + 6 * RED - 7.5 * BLUE + 1))', {
+    'NIR': image.select('b3'),
+    'RED': image.select('b2'),
+    'BLUE': image.select('b1')
+}).rename('EVI');
+Map.addLayer(evi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'EVI');
+
+var savi = image.expression(
+  '((NIR - RED) / (NIR + RED + L)) * (1 + L)', {
+    'NIR': image.select('b3'),
+    'RED': image.select('b2'),
+    'L': 0.5  // soil-brightness correction factor
+}).rename('SAVI');
+Map.addLayer(savi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'SAVI');
+
+// Import the NASA-USDA Global Soil Moisture Data
+var soilMoisture = ee.ImageCollection('NASA_USDA/HSL/soil_moisture');
+
+// Select the 'ssm' band which represents surface soil moisture
+soilMoisture = soilMoisture.select('ssm');
+
+// Clip the soil moisture data to your area of interest
+soilMoisture = soilMoisture.map(function(image) {
+  return image.clip(aoi);
+});
+
+// Calculate the average soil moisture
+var avgSoilMoisture = soilMoisture.mean();
+
+// Display the average soil moisture
+Map.addLayer(avgSoilMoisture, {min: 0, max: 100, palette: ['red', 'orange', 'yellow']}, 'Average Soil Moisture');
+
+// Replace with your bucket name
+var bucket = 'soil_moisture_43'; 
+
+// Replace with your file name
+var fileName = 'zimplats2024'; 
+
+// Export the image to Cloud Storage
+Export.image.toCloudStorage({
+  image: image,
+  description: 'imageToCloudStorage',
+  bucket: bucket,
+  fileNamePrefix: fileName,
+});
+// AUTOMATICALLY GENERATED: location from saved link.
+Map.setCenter(30.074999999941554, -19.625000017159348, 8)
+
+// Load the image asset
+var image = ee.Image('projects/ee-shingamadzima/assets/unki2024');
+
+// Clip the image to your area of interest
+var aoi = ee.Geometry.Polygon(
+        [[[30.08, -19.62],
+          [30.07, -19.62],
+          [30.07, -19.63],
+          [30.08, -19.63]]], null, false);
+var image = image.clip(aoi);
+
+// Resample the image to a common resolution
+var image = image.resample('bilinear').reproject({
+  crs: image.select(0).projection()
+});
+
+// Display the image
+Map.centerObject(aoi, 8);
+Map.addLayer(image, {bands: ['b1', 'b2', 'b3'], min: 0, max: 255}, 'image');
+
+var ndvi = image.normalizedDifference(['b3', 'b2']).rename('NDVI');
+Map.addLayer(ndvi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'NDVI');
+
+var evi = image.expression(
+  '2.5 * ((NIR - RED) / (NIR + 6 * RED - 7.5 * BLUE + 1))', {
+    'NIR': image.select('b3'),
+    'RED': image.select('b2'),
+    'BLUE': image.select('b1')
+}).rename('EVI');
+Map.addLayer(evi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'EVI');
+
+var savi = image.expression(
+  '((NIR - RED) / (NIR + RED + L)) * (1 + L)', {
+    'NIR': image.select('b3'),
+    'RED': image.select('b2'),
+    'L': 0.5  // soil-brightness correction factor
+}).rename('SAVI');
+Map.addLayer(savi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'SAVI');
+
+// Import the NASA-USDA Global Soil Moisture Data
+var soilMoisture = ee.ImageCollection('NASA_USDA/HSL/soil_moisture');
+
+// Filter the collection to a specific time period
+var startDate = '2021-02-01';
+var endDate = '2021-02-28';
+soilMoisture = soilMoisture.filterDate(startDate, endDate);
+
+// Select the 'ssm' band which represents surface soil moisture
+soilMoisture = soilMoisture.select('ssm');
+
+// Clip the soil moisture data to your area of interest
+soilMoisture = soilMoisture.map(function(image) {
+  return image.clip(aoi);
+});
+
+// Calculate the average soil moisture
+var avgSoilMoisture = soilMoisture.mean();
+
+// Display the average soil moisture
+Map.addLayer(avgSoilMoisture, {min: 0, max: 100, palette: ['red', 'orange', 'yellow']}, 'Average Soil Moisture');
+
+// Replace with your bucket name
+var bucket = 'soil_moisture_43'; 
+
+// Replace with your file name
+var fileName = 'unki2024'; 
+
+// Export the image to Cloud Storage
+Export.image.toCloudStorage({
+  image: image,
+  description: 'imageToCloudStorage',
+  bucket: bucket,
+  fileNamePrefix: fileName,
+});
+// AUTOMATICALLY GENERATED: location from saved link.
+Map.setCenter(30.074999999941554, -19.625000017159348, 8)
+
+// Load the image asset
+var image = ee.Image('projects/ee-shingamadzima/assets/unki2021');
+
+// Clip the image to your area of interest
+var aoi = ee.Geometry.Polygon(
+        [[[30.08, -19.62],
+          [30.07, -19.62],
+          [30.07, -19.63],
+          [30.08, -19.63]]], null, false);
+var image = image.clip(aoi);
+
+// Resample the image to a common resolution
+var image = image.resample('bilinear').reproject({
+  crs: image.select(0).projection()
+});
+
+// Display the image
+Map.centerObject(aoi, 8);
+Map.addLayer(image, {bands: ['b1', 'b2', 'b3'], min: 0, max: 255}, 'image');
+
+var ndvi = image.normalizedDifference(['b3', 'b2']).rename('NDVI');
+Map.addLayer(ndvi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'NDVI');
+
+var evi = image.expression(
+  '2.5 * ((NIR - RED) / (NIR + 6 * RED - 7.5 * BLUE + 1))', {
+    'NIR': image.select('b3'),
+    'RED': image.select('b2'),
+    'BLUE': image.select('b1')
+}).rename('EVI');
+Map.addLayer(evi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'EVI');
+
+var savi = image.expression(
+  '((NIR - RED) / (NIR + RED + L)) * (1 + L)', {
+    'NIR': image.select('b3'),
+    'RED': image.select('b2'),
+    'L': 0.5  // soil-brightness correction factor
+}).rename('SAVI');
+Map.addLayer(savi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'SAVI');
+
+// Import the NASA-USDA Global Soil Moisture Data
+var soilMoisture = ee.ImageCollection('NASA_USDA/HSL/soil_moisture');
+
+// Select the 'ssm' band which represents surface soil moisture
+soilMoisture = soilMoisture.select('ssm');
+
+// Clip the soil moisture data to your area of interest
+soilMoisture = soilMoisture.map(function(image) {
+  return image.clip(aoi);
+});
+
+// Calculate the average soil moisture
+var avgSoilMoisture = soilMoisture.mean();
+
+// Display the average soil moisture
+Map.addLayer(avgSoilMoisture, {min: 0, max: 100, palette: ['red', 'orange', 'yellow']}, 'Average Soil Moisture');
+
+// Replace with your bucket name
+var bucket = 'soil_moisture_43'; 
+
+// Replace with your file name
+var fileName = 'unki2021'; 
+
+// Export the image to Cloud Storage
+Export.image.toCloudStorage({
+  image: image,
+  description: 'imageToCloudStorage',
+  bucket: bucket,
+  fileNamePrefix: fileName,
+});
+// AUTOMATICALLY GENERATED: imported vars from saved link.
+var CONVERT_TO_IMPORT = (
+[{"type":"imageVisParam","name":"imageVisParam","record":{"params":{"opacity":0.01,"gamma":0.1}}}])
+
+// AUTOMATICALLY GENERATED: location from saved link.
+Map.setCenter(29.83500000000896, -20.315000017202834, 8)
+
+// Load the image asset
+var image = ee.Image('projects/ee-scm/assets/Mimosatsf');
+
+// Clip the image to your area of interest
+var aoi = ee.Geometry.Polygon(
+        [[[29.83, -20.31],
+          [29.84, -20.31],
+          [29.84, -20.32],
+          [29.83, -20.32]]], null, false);
+var image = image.clip(aoi);
+
+// Resample the image to a common resolution
+var image = image.resample('bilinear').reproject({
+  crs: image.select(0).projection()
+});
+
+// Display the image
+Map.centerObject(aoi, 8);
+Map.addLayer(image, {bands: ['b1', 'b2', 'b3'], min: 0, max: 255}, 'image');
+
+var ndvi = image.normalizedDifference(['b3', 'b2']).rename('NDVI');
+Map.addLayer(ndvi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'NDVI');
+
+var evi = image.expression(
+  '2.5 * ((NIR - RED) / (NIR + 6 * RED - 7.5 * BLUE + 1))', {
+    'NIR': image.select('b3'),
+    'RED': image.select('b2'),
+    'BLUE': image.select('b1')
+}).rename('EVI');
+Map.addLayer(evi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'EVI');
+
+var savi = image.expression(
+  '((NIR - RED) / (NIR + RED + L)) * (1 + L)', {
+    'NIR': image.select('b3'),
+    'RED': image.select('b2'),
+    'L': 0.5  // soil-brightness correction factor
+}).rename('SAVI');
+Map.addLayer(savi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'SAVI');
+
+// Import the NASA-USDA Global Soil Moisture Data
+var soilMoisture = ee.ImageCollection('NASA_USDA/HSL/soil_moisture');
+
+// Filter the collection to a specific time period
+var startDate = '2021-02-01';
+var endDate = '2021-02-28';
+soilMoisture = soilMoisture.filterDate(startDate, endDate);
+
+// Select the 'ssm' band which represents surface soil moisture
+soilMoisture = soilMoisture.select('ssm');
+
+// Clip the soil moisture data to your area of interest
+var aoi = ee.Geometry.Polygon(
+        [[[29.83, -20.31],
+          [29.84, -20.31],
+          [29.84, -20.32],
+          [29.83, -20.32]]], null, false);
+soilMoisture = soilMoisture.map(function(image) {
+  return image.clip(aoi);
+});
+
+// Display the soil moisture data
+Map.centerObject(aoi, 8);
+Map.addLayer(soilMoisture.mean(), {min: 0, max: 100}, 'Soil Moisture');
+
+// Replace with your bucket name
+var bucket = 'soil_moisture_43'; 
+
+// Replace with your file name
+var fileName = 'Mimosatsf'; 
+
+// Export the image to Cloud Storage
+Export.image.toCloudStorage({
+  image: image,
+  description: 'imageToCloudStorage',
+  bucket: bucket,
+  fileNamePrefix: fileName,
+  region: aoi,
+  scale: 30,
+  fileFormat: 'GeoTIFF'
+});
+
+// AUTOMATICALLY GENERATED: location from saved link.
+Map.setCenter(29.83500000000896, -20.315000017202834, 8)
+
+// Load the image asset
+var image = ee.Image('projects/ee-shingamadzima/assets/mimosa2021');
+
+// Clip the image to your area of interest
+var aoi = ee.Geometry.Polygon(
+        [[[29.83, -20.31],
+          [29.84, -20.31],
+          [29.84, -20.32],
+          [29.83, -20.32]]], null, false);
+var image = image.clip(aoi);
+
+// Resample the image to a common resolution
+var image = image.resample('bilinear').reproject({
+  crs: image.select(0).projection()
+});
+
+// Display the image
+Map.centerObject(aoi, 8);
+Map.addLayer(image, {bands: ['b1', 'b2', 'b3'], min: 0, max: 255}, 'image');
+
+var ndvi = image.normalizedDifference(['b3', 'b2']).rename('NDVI');
+Map.addLayer(ndvi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'NDVI');
+
+var evi = image.expression(
+  '2.5 * ((NIR - RED) / (NIR + 6 * RED - 7.5 * BLUE + 1))', {
+    'NIR': image.select('b3'),
+    'RED': image.select('b2'),
+    'BLUE': image.select('b1')
+}).rename('EVI');
+Map.addLayer(evi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'EVI');
+
+var savi = image.expression(
+  '((NIR - RED) / (NIR + RED + L)) * (1 + L)', {
+    'NIR': image.select('b3'),
+    'RED': image.select('b2'),
+    'L': 0.5  // soil-brightness correction factor
+}).rename('SAVI');
+Map.addLayer(savi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'SAVI');
+
+// Import the NASA-USDA Global Soil Moisture Data
+var soilMoisture = ee.ImageCollection('NASA_USDA/HSL/soil_moisture');
+
+// Filter the collection to a specific time period
+var startDate = '2021-02-01';
+var endDate = '2021-02-28';
+soilMoisture = soilMoisture.filterDate(startDate, endDate);
+
+// Select the 'ssm' band which represents surface soil moisture
+soilMoisture = soilMoisture.select('ssm');
+
+// Clip the soil moisture data to your area of interest
+soilMoisture = soilMoisture.map(function(image) {
+  return image.clip(aoi);
+});
+
+// Calculate the average soil moisture
+var avgSoilMoisture = soilMoisture.mean();
+
+// Display the average soil moisture
+Map.addLayer(avgSoilMoisture, {min: 0, max: 100, palette: ['red', 'orange', 'yellow']}, 'Average Soil Moisture');
+
+// Replace with your bucket name
+var bucket = 'soil_moisture_43'; 
+
+// Replace with your file name
+var fileName = 'mimosa2021'; 
+
+// Export the image to Cloud Storage
+Export.image.toCloudStorage({
+  image: image,
+  description: 'imageToCloudStorage',
+  bucket: bucket,
+  fileNamePrefix: fileName,
+});
+// AUTOMATICALLY GENERATED: location from saved link.
+Map.setCenter(29.83500000000896, -20.315000017202834, 8)
+
+// Load the image asset
+var image = ee.Image('projects/ee-shingamadzima/assets/mimosa2024');
+
+// Clip the image to your area of interest
+var aoi = ee.Geometry.Polygon(
+        [[[29.83, -20.31],
+          [29.84, -20.31],
+          [29.84, -20.32],
+          [29.83, -20.32]]], null, false);
+var image = image.clip(aoi);
+
+// Resample the image to a common resolution
+var image = image.resample('bilinear').reproject({
+  crs: image.select(0).projection()
+});
+
+// Display the image
+Map.centerObject(aoi, 8);
+Map.addLayer(image, {bands: ['b1', 'b2', 'b3'], min: 0, max: 255}, 'image');
+
+var ndvi = image.normalizedDifference(['b3', 'b2']).rename('NDVI');
+Map.addLayer(ndvi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'NDVI');
+
+var evi = image.expression(
+  '2.5 * ((NIR - RED) / (NIR + 6 * RED - 7.5 * BLUE + 1))', {
+    'NIR': image.select('b3'),
+    'RED': image.select('b2'),
+    'BLUE': image.select('b1')
+}).rename('EVI');
+Map.addLayer(evi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'EVI');
+
+var savi = image.expression(
+  '((NIR - RED) / (NIR + RED + L)) * (1 + L)', {
+    'NIR': image.select('b3'),
+    'RED': image.select('b2'),
+    'L': 0.5  // soil-brightness correction factor
+}).rename('SAVI');
+Map.addLayer(savi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'SAVI');
+
+// Import the NASA-USDA Global Soil Moisture Data
+var soilMoisture = ee.ImageCollection('NASA_USDA/HSL/soil_moisture');
+
+// Filter the collection to a specific time period
+var startDate = '2024-02-01';
+var endDate = '2024-02-16';
+soilMoisture = soilMoisture.filterDate(startDate, endDate);
+
+// Select the 'ssm' band which represents surface soil moisture
+soilMoisture = soilMoisture.select('ssm');
+
+// Clip the soil moisture data to your area of interest
+soilMoisture = soilMoisture.map(function(image) {
+  return image.clip(aoi);
+});
+
+// Calculate the average soil moisture
+var avgSoilMoisture = soilMoisture.mean();
+
+// Display the average soil moisture
+Map.addLayer(avgSoilMoisture, {min: 0, max: 100, palette: ['red', 'orange', 'yellow']}, 'Average Soil Moisture');
+
+// Replace with your bucket name
+var bucket = 'soil_moisture_43'; 
+
+// Replace with your file name
+var fileName = 'mimosa2024'; 
+
+// Export the image to Cloud Storage
+Export.image.toCloudStorage({
+  image: image,
+  description: 'imageToCloudStorage',
+  bucket: bucket,
+  fileNamePrefix: fileName,
+});
+// AUTOMATICALLY GENERATED: imported vars from saved link.
+var CONVERT_TO_IMPORT = (
+[{"type":"imageVisParam","name":"imageVisParam","record":{"params":{"opacity":0.01,"gamma":0.1}}}])
+
+// AUTOMATICALLY GENERATED: location from saved link.
+Map.setCenter(30.442997790873903, -18.030821092141828, 8)
+
+// Load the image asset
+var image = ee.Image('projects/ee-shingamadzima/assets/zimplats2021');
+
+// Clip the image to your area of interest
+var aoi = ee.Geometry.Polygon(
+        [[[30.439, -18.026],
+          [30.438, -18.032],
+          [30.441, -18.037],
+          [30.451, -18.029]]], null, false);
+var image = image.clip(aoi);
+
+// Resample the image to a common resolution
+var image = image.resample('bilinear').reproject({
+  crs: image.select(0).projection()
+});
+
+// Display the image
+Map.centerObject(aoi, 8);
+Map.addLayer(image, {bands: ['b1', 'b2', 'b3'], min: 0, max: 255}, 'image');
+
+var ndvi = image.normalizedDifference(['b3', 'b2']).rename('NDVI');
+Map.addLayer(ndvi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'NDVI');
+
+var evi = image.expression(
+  '2.5 * ((NIR - RED) / (NIR + 6 * RED - 7.5 * BLUE + 1))', {
+    'NIR': image.select('b3'),
+    'RED': image.select('b2'),
+    'BLUE': image.select('b1')
+}).rename('EVI');
+Map.addLayer(evi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'EVI');
+
+var savi = image.expression(
+  '((NIR - RED) / (NIR + RED + L)) * (1 + L)', {
+    'NIR': image.select('b3'),
+    'RED': image.select('b2'),
+    'L': 0.5  // soil-brightness correction factor
+}).rename('SAVI');
+Map.addLayer(savi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'SAVI');
+
+// Import the NASA-USDA Global Soil Moisture Data
+var soilMoisture = ee.ImageCollection('NASA_USDA/HSL/soil_moisture');
+
+// Select the 'ssm' band which represents surface soil moisture
+soilMoisture = soilMoisture.select('ssm');
+
+// Clip the soil moisture data to your area of interest
+soilMoisture = soilMoisture.map(function(image) {
+  return image.clip(aoi);
+});
+
+// Calculate the average soil moisture
+var avgSoilMoisture = soilMoisture.mean();
+
+// Display the average soil moisture
+Map.addLayer(avgSoilMoisture, {min: 0, max: 100, palette: ['red', 'orange', 'yellow']}, 'Average Soil Moisture');
+
+// Replace with your bucket name
+var bucket = 'soil_moisture_43'; 
+
+// Replace with your file name
+var fileName = 'zimplats2021'; 
+
+// Export the image to Cloud Storage
+Export.image.toCloudStorage({
+  image: image,
+  description: 'imageToCloudStorage',
+  bucket: bucket,
+  fileNamePrefix: fileName,
+});
+// AUTOMATICALLY GENERATED: imported vars from saved link.
+var CONVERT_TO_IMPORT = (
+[{"type":"imageVisParam","name":"imageVisParam","record":{"params":{"opacity":0.01,"gamma":0.1}}}])
+
+// AUTOMATICALLY GENERATED: location from saved link.
+Map.setCenter(30.442997790873903, -18.030821092141828, 8)
+
+// Load the image asset
+var image = ee.Image('projects/ee-shingamadzima/assets/zimplats2021');
+
+// Clip the image to your area of interest
+var aoi = ee.Geometry.Polygon(
+        [[[30.439, -18.026],
+          [30.438, -18.032],
+          [30.441, -18.037],
+          [30.451, -18.029]]], null, false);
+var image = image.clip(aoi);
+
+// Resample the image to a common resolution
+var image = image.resample('bilinear').reproject({
+  crs: image.select(0).projection()
+});
+
+// Display the image
+Map.centerObject(aoi, 8);
+Map.addLayer(image, {bands: ['b1', 'b2', 'b3'], min: 0, max: 255}, 'image');
+
+var ndvi = image.normalizedDifference(['b3', 'b2']).rename('NDVI');
+Map.addLayer(ndvi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'NDVI');
+
+var evi = image.expression(
+  '2.5 * ((NIR - RED) / (NIR + 6 * RED - 7.5 * BLUE + 1))', {
+    'NIR': image.select('b3'),
+    'RED': image.select('b2'),
+    'BLUE': image.select('b1')
+}).rename('EVI');
+Map.addLayer(evi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'EVI');
+
+var savi = image.expression(
+  '((NIR - RED) / (NIR + RED + L)) * (1 + L)', {
+    'NIR': image.select('b3'),
+    'RED': image.select('b2'),
+    'L': 0.5  // soil-brightness correction factor
+}).rename('SAVI');
+Map.addLayer(savi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'SAVI');
+
+// Import the NASA-USDA Global Soil Moisture Data
+var soilMoisture = ee.ImageCollection('NASA_USDA/HSL/soil_moisture');
+
+// Filter the collection to a specific time period
+var startDate = '2021-02-01';
+var endDate = '2021-02-28';
+soilMoisture = soilMoisture.filterDate(startDate, endDate);
+
+// Select the 'ssm' band which represents surface soil moisture
+soilMoisture = soilMoisture.select('ssm');
+
+// Clip the soil moisture data to your area of interest
+soilMoisture = soilMoisture.map(function(image) {
+  return image.clip(aoi);
+});
+
+// Calculate the average soil moisture
+var avgSoilMoisture = soilMoisture.mean();
+
+// Display the average soil moisture
+Map.addLayer(avgSoilMoisture, {min: 0, max: 100, palette: ['red', 'orange', 'yellow']}, 'Average Soil Moisture');
+
+// Replace with your bucket name
+var bucket = 'soil_moisture_43'; 
+
+// Replace with your file name
+var fileName = 'zimplats2021'; 
+
+// Export the image to Cloud Storage
+Export.image.toCloudStorage({
+  image: image,
+  description: 'imageToCloudStorage',
+  bucket: bucket,
+  fileNamePrefix: fileName,
+});
+// AUTOMATICALLY GENERATED: location from saved link.
+Map.setCenter(29.83500000000896, -20.315000017202834, 8)
+
+// Load the image asset
+var image = ee.Image('projects/ee-shingamadzima/assets/unki2021');
+
+// Clip the image to your area of interest
+var aoi = ee.Geometry.Polygon(
+        [[[29.83, -20.31],
+          [29.84, -20.31],
+          [29.84, -20.32],
+          [29.83, -20.32]]], null, false);
+var image = image.clip(aoi);
+
+// Resample the image to a common resolution
+var image = image.resample('bilinear').reproject({
+  crs: image.select(0).projection()
+});
+
+// Display the image
+Map.centerObject(aoi, 8);
+Map.addLayer(image, {bands: ['b1', 'b2', 'b3'], min: 0, max: 255}, 'image');
+
+var ndvi = image.normalizedDifference(['b3', 'b2']).rename('NDVI');
+Map.addLayer(ndvi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'NDVI');
+
+var evi = image.expression(
+  '2.5 * ((NIR - RED) / (NIR + 6 * RED - 7.5 * BLUE + 1))', {
+    'NIR': image.select('b3'),
+    'RED': image.select('b2'),
+    'BLUE': image.select('b1')
+}).rename('EVI');
+Map.addLayer(evi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'EVI');
+
+var savi = image.expression(
+  '((NIR - RED) / (NIR + RED + L)) * (1 + L)', {
+    'NIR': image.select('b3'),
+    'RED': image.select('b2'),
+    'L': 0.5  // soil-brightness correction factor
+}).rename('SAVI');
+Map.addLayer(savi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'SAVI');
+
+// Import the NASA-USDA Global Soil Moisture Data
+var soilMoisture = ee.ImageCollection('NASA_USDA/HSL/soil_moisture');
+
+// Filter the collection to a specific time period
+var startDate = '2021-02-01';
+var endDate = '2021-02-28';
+soilMoisture = soilMoisture.filterDate(startDate, endDate);
+
+// Select the 'ssm' band which represents surface soil moisture
+soilMoisture = soilMoisture.select('ssm');
+
+// Clip the soil moisture data to your area of interest
+soilMoisture = soilMoisture.map(function(image) {
+  return image.clip(aoi);
+});
+
+// Calculate the average soil moisture
+var avgSoilMoisture = soilMoisture.mean();
+
+// Display the average soil moisture
+Map.addLayer(avgSoilMoisture, {min: 0, max: 100, palette: ['red', 'orange', 'yellow']}, 'Average Soil Moisture');
+
+// Replace with your bucket name
+var bucket = 'soil_moisture_43'; 
+
+// Replace with your file name
+var fileName = 'unki2021'; 
+
+// Export the image to Cloud Storage
+Export.image.toCloudStorage({
+  image: image,
+  description: 'imageToCloudStorage',
+  bucket: bucket,
+  fileNamePrefix: fileName,
+});
+// AUTOMATICALLY GENERATED: location from saved link.
+Map.setCenter(30.442997790873903, -18.030821092141828, 8)
+
+// Load the image asset
+var image = ee.Image('projects/ee-shingamadzima/assets/zimplats2024');
+
+// Clip the image to your area of interest
+var aoi = ee.Geometry.Polygon(
+        [[[30.439, -18.026],
+          [30.438, -18.032],
+          [30.441, -18.037],
+          [30.451, -18.029]]], null, false);
+var image = image.clip(aoi);
+
+// Resample the image to a common resolution
+var image = image.resample('bilinear').reproject({
+  crs: image.select(0).projection()
+});
+
+// Display the image
+Map.centerObject(aoi, 8);
+Map.addLayer(image, {bands: ['b1', 'b2', 'b3'], min: 0, max: 255}, 'image');
+
+var ndvi = image.normalizedDifference(['b3', 'b2']).rename('NDVI');
+Map.addLayer(ndvi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'NDVI');
+
+var evi = image.expression(
+  '2.5 * ((NIR - RED) / (NIR + 6 * RED - 7.5 * BLUE + 1))', {
+    'NIR': image.select('b3'),
+    'RED': image.select('b2'),
+    'BLUE': image.select('b1')
+}).rename('EVI');
+Map.addLayer(evi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'EVI');
+
+var savi = image.expression(
+  '((NIR - RED) / (NIR + RED + L)) * (1 + L)', {
+    'NIR': image.select('b3'),
+    'RED': image.select('b2'),
+    'L': 0.5  // soil-brightness correction factor
+}).rename('SAVI');
+Map.addLayer(savi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'SAVI');
+
+// Import the NASA-USDA Global Soil Moisture Data
+var soilMoisture = ee.ImageCollection('NASA_USDA/HSL/soil_moisture');
+
+// Filter the collection to a specific time period
+var startDate = '2021-02-01';
+var endDate = '2021-02-28';
+soilMoisture = soilMoisture.filterDate(startDate, endDate);
+
+// Select the 'ssm' band which represents surface soil moisture
+soilMoisture = soilMoisture.select('ssm');
+
+// Clip the soil moisture data to your area of interest
+soilMoisture = soilMoisture.map(function(image) {
+  return image.clip(aoi);
+});
+
+// Calculate the average soil moisture
+var avgSoilMoisture = soilMoisture.mean();
+
+// Display the average soil moisture
+Map.addLayer(avgSoilMoisture, {min: 0, max: 100, palette: ['red', 'orange', 'yellow']}, 'Average Soil Moisture');
+
+// Replace with your bucket name
+var bucket = 'soil_moisture_43'; 
+
+// Replace with your file name
+var fileName = 'zimplats2024'; 
+
+// Export the image to Cloud Storage
+Export.image.toCloudStorage({
+  image: image,
+  description: 'imageToCloudStorage',
+  bucket: bucket,
+  fileNamePrefix: fileName,
+});
+// AUTOMATICALLY GENERATED: location from saved link.
+Map.setCenter(29.83500000000896, -20.315000017202834, 8)
+
+// Load the image asset
+var image = ee.Image('projects/ee-shingamadzima/assets/mimosa2024');
+
+// Clip the image to your area of interest
+var aoi = ee.Geometry.Polygon(
+        [[[29.83, -20.31],
+          [29.84, -20.31],
+          [29.84, -20.32],
+          [29.83, -20.32]]], null, false);
+var image = image.clip(aoi);
+
+// Resample the image to a common resolution
+var image = image.resample('bilinear').reproject({
+  crs: image.select(0).projection()
+});
+
+// Display the image
+Map.centerObject(aoi, 8);
+Map.addLayer(image, {bands: ['b1', 'b2', 'b3'], min: 0, max: 255}, 'image');
+
+var ndvi = image.normalizedDifference(['b3', 'b2']).rename('NDVI');
+Map.addLayer(ndvi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'NDVI');
+
+var evi = image.expression(
+  '2.5 * ((NIR - RED) / (NIR + 6 * RED - 7.5 * BLUE + 1))', {
+    'NIR': image.select('b3'),
+    'RED': image.select('b2'),
+    'BLUE': image.select('b1')
+}).rename('EVI');
+Map.addLayer(evi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'EVI');
+
+var savi = image.expression(
+  '((NIR - RED) / (NIR + RED + L)) * (1 + L)', {
+    'NIR': image.select('b3'),
+    'RED': image.select('b2'),
+    'L': 0.5  // soil-brightness correction factor
+}).rename('SAVI');
+Map.addLayer(savi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'SAVI');
+
+// Import the NASA-USDA Global Soil Moisture Data
+var soilMoisture = ee.ImageCollection('NASA_USDA/HSL/soil_moisture');
+
+// Select the 'ssm' band which represents surface soil moisture
+soilMoisture = soilMoisture.select('ssm');
+
+// Clip the soil moisture data to your area of interest
+soilMoisture = soilMoisture.map(function(image) {
+  return image.clip(aoi);
+});
+
+// Calculate the average soil moisture
+var avgSoilMoisture = soilMoisture.mean();
+
+// Display the average soil moisture
+Map.addLayer(avgSoilMoisture, {min: 0, max: 100, palette: ['red', 'orange', 'yellow']}, 'Average Soil Moisture');
+
+// Replace with your bucket name
+var bucket = 'soil_moisture_43'; 
+
+// Replace with your file name
+var fileName = 'mimosa2024'; 
+
+// Export the image to Cloud Storage
+Export.image.toCloudStorage({
+  image: image,
+  description: 'imageToCloudStorage',
+  bucket: bucket,
+  fileNamePrefix: fileName,
+});
+// AUTOMATICALLY GENERATED: location from saved link.
+Map.setCenter(29.83500000000896, -20.315000017202834, 8)
+
+// Load the image asset
+var image = ee.Image('projects/ee-shingamadzima/assets/mimosa2024');
+
+// Clip the image to your area of interest
+var aoi = ee.Geometry.Polygon(
+        [[[29.83, -20.31],
+          [29.84, -20.31],
+          [29.84, -20.32],
+          [29.83, -20.32]]], null, false);
+var image = image.clip(aoi);
+
+// Resample the image to a common resolution
+var image = image.resample('bilinear').reproject({
+  crs: image.select(0).projection()
+});
+
+// Display the image
+Map.centerObject(aoi, 8);
+Map.addLayer(image, {bands: ['b1', 'b2', 'b3'], min: 0, max: 255}, 'image');
+
+var ndvi = image.normalizedDifference(['b3', 'b2']).rename('NDVI');
+Map.addLayer(ndvi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'NDVI');
+
+var evi = image.expression(
+  '2.5 * ((NIR - RED) / (NIR + 6 * RED - 7.5 * BLUE + 1))', {
+    'NIR': image.select('b3'),
+    'RED': image.select('b2'),
+    'BLUE': image.select('b1')
+}).rename('EVI');
+Map.addLayer(evi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'EVI');
+
+var savi = image.expression(
+  '((NIR - RED) / (NIR + RED + L)) * (1 + L)', {
+    'NIR': image.select('b3'),
+    'RED': image.select('b2'),
+    'L': 0.5  // soil-brightness correction factor
+}).rename('SAVI');
+Map.addLayer(savi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'SAVI');
+
+// Import the NASA-USDA Global Soil Moisture Data
+var soilMoisture = ee.ImageCollection('NASA_USDA/HSL/soil_moisture');
+
+// Filter the collection to a specific time period
+var startDate = '2024-02-01';
+var endDate = '2024-02-29';
+soilMoisture = soilMoisture.filterDate(startDate, endDate);
+
+// Select the 'ssm' band which represents surface soil moisture
+soilMoisture = soilMoisture.select('ssm');
+
+// Clip the soil moisture data to your area of interest
+soilMoisture = soilMoisture.map(function(image) {
+  return image.clip(aoi);
+});
+
+// Calculate the average soil moisture
+var avgSoilMoisture = soilMoisture.mean();
+
+// Display the average soil moisture
+Map.addLayer(avgSoilMoisture, {min: 0, max: 100, palette: ['red', 'orange', 'yellow']}, 'Average Soil Moisture');
+
+// Replace with your bucket name
+var bucket = 'soil_moisture_43'; 
+
+// Replace with your file name
+var fileName = 'mimosa2024'; 
+
+// Export the image to Cloud Storage
+Export.image.toCloudStorage({
+  image: image,
+  description: 'imageToCloudStorage',
+  bucket: bucket,
+  fileNamePrefix: fileName,
+});
+// AUTOMATICALLY GENERATED: location from saved link.
+Map.setCenter(30.094999999943695, -19.624500002212624, 8)
+
+// Load the image asset
+var image = ee.Image('projects/ee-scm/assets/unki2021');
+
+// Clip the image to your area of interest
+var aoi = ee.Geometry.Polygon(
+        [[[30.094, -19.625],
+          [30.096, -19.625],
+          [30.096, -19.624],
+          [30.094, -19.624]]], null, false);
+var image = image.clip(aoi);
+
+// Resample the image to a common resolution
+var image = image.resample('bilinear').reproject({
+  crs: image.select(0).projection()
+});
+
+// Display the image
+Map.centerObject(aoi, 8);
+Map.addLayer(image, {bands: ['b1', 'b2', 'b3'], min: 0, max: 255}, 'image');
+
+var ndvi = image.normalizedDifference(['b3', 'b2']).rename('NDVI');
+Map.addLayer(ndvi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'NDVI');
+
+var evi = image.expression(
+  '2.5 * ((NIR - RED) / (NIR + 6 * RED - 7.5 * BLUE + 1))', {
+    'NIR': image.select('b3'),
+    'RED': image.select('b2'),
+    'BLUE': image.select('b1')
+}).rename('EVI');
+Map.addLayer(evi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'EVI');
+
+var savi = image.expression(
+  '((NIR - RED) / (NIR + RED + L)) * (1 + L)', {
+    'NIR': image.select('b3'),
+    'RED': image.select('b2'),
+    'L': 0.5  // soil-brightness correction factor
+}).rename('SAVI');
+Map.addLayer(savi, {min: -1, max: 1, palette: ['blue', 'white', 'green']}, 'SAVI');
+
+// Import the NASA-USDA Global Soil Moisture Data
+var soilMoisture = ee.ImageCollection('NASA_USDA/HSL/soil_moisture');
+
+// Filter the collection to a specific time period
+var startDate = '2021-02-01';
+var endDate = '2021-02-28';
+soilMoisture = soilMoisture.filterDate(startDate, endDate);
+
+// Select the 'ssm' band which represents surface soil moisture
+soilMoisture = soilMoisture.select('ssm');
+
+// Clip the soil moisture data to your area of interest
+var aoi = ee.Geometry.Polygon(
+        [[[30.094, -19.625],
+          [30.096, -19.625],
+          [30.096, -19.624],
+          [30.094, -19.624]]], null, false);
+soilMoisture = soilMoisture.map(function(image) {
+  return image.clip(aoi);
+});
+
+// Display the soil moisture data
+Map.centerObject(aoi, 8);
+Map.addLayer(soilMoisture.mean(), {min: 0, max: 100}, 'Soil Moisture');
+
+// Replace with your bucket name
+var bucket = 'soil_moisture_43'; 
+
+// Replace with your file name
+var fileName = 'unki2021'; 
+
+// Export the image to Cloud Storage
+Export.image.toCloudStorage({
+  image: image,
+  description: 'imageToCloudStorage',
+  bucket: bucket,
+  fileNamePrefix: fileName,
+});
